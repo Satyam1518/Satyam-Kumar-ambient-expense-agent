@@ -130,6 +130,10 @@ def parse_payload(payload: Any) -> dict:
 
 def parse_event(ctx: Context, node_input: Any) -> Event:
     """Parses, extracts, and validates incoming expense report details."""
+    # If resuming and the expense is already validated in context state, bypass parsing
+    if ctx.state.get("expense"):
+        return Event(output=ctx.state.get("expense"))
+
     parsed = parse_payload(node_input)
     expense = Expense(**parsed)
     # Persist the expense details in state for subsequent workflow steps
